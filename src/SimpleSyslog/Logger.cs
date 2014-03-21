@@ -14,6 +14,7 @@ namespace SimpleSyslog
     static UdpClient udpClient;
     static int facility;
     static string sender;
+    public static string MessageFormat { get; set; }
 
     public static void Initialize(string hostName, int port, string sender = null, int facility = 0)
     {
@@ -71,6 +72,8 @@ namespace SimpleSyslog
 
     static void Send(LogLevel logLevel, string message)
     {
+      var messageFormat = MessageFormat ?? "{message}";
+      message = messageFormat.Replace("{message}", message);
       message = string.Format("<{0}>{1} {2} {3} {4}", facility * 8 + (int)logLevel, DateTime.UtcNow.ToString("s"), Dns.GetHostName(), sender, message);
       var bytes = Encoding.ASCII.GetBytes(message);
       AutoResetEvent.WaitOne();
