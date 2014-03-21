@@ -1,0 +1,4 @@
+SimpleSyslog
+============
+
+Simple syslog logging
