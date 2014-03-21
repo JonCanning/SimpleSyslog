@@ -30,6 +30,7 @@ namespace SimpleSyslog
         var stackTrace = new StackFrame(2);
         sender = stackTrace.GetMethod().DeclaringType.Name;
       }
+      sender = sender.Replace(' ', '_');
       Task.Factory.StartNew(() => Send(logLevel, message));
     }
 
