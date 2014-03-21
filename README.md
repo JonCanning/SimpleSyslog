@@ -1,4 +1,5 @@
 SimpleSyslog
 ============
 
-Simple syslog logging
+Logger.Initialize("host.syslog.com", 12345);
+Logger.Info("Hello world!");
