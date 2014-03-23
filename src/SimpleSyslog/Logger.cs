@@ -13,64 +13,116 @@ namespace SimpleSyslog
     static readonly AutoResetEvent AutoResetEvent = new AutoResetEvent(true);
     static UdpClient udpClient;
     static int facility;
-    static string sender;
     public static string MessageFormat { get; set; }
+    static string fixedSender;
 
-    public static void Initialize(string hostName, int port, string sender = null, int facility = 0)
+    public static void Initialize(string hostName, int port, int facility = 16, string sender = null)
     {
+      fixedSender = sender;
       udpClient = new UdpClient(hostName, port);
-      Logger.sender = sender;
       Logger.facility = facility;
     }
 
-    static void Log(LogLevel logLevel, string message, params object[] args)
+    public static void Log(LogLevel logLevel, string message, Type senderType, params object[] args)
     {
       message = string.Format(message, args);
-      if (sender == null)
-      {
-        var stackTrace = new StackFrame(2);
-        sender = stackTrace.GetMethod().DeclaringType.Name;
-      }
-      sender = sender.Replace(' ', '_');
-      Task.Factory.StartNew(() => Send(logLevel, message));
+      var sender = fixedSender ?? senderType.Name.Replace(' ', '_');
+      Task.Factory.StartNew(() => Send(logLevel, message, sender));
     }
 
-    public static void Fatal(string message, params object[] args)
+    public static void Log<T>(LogLevel logLevel, string message, params object[] args)
     {
-      Log(LogLevel.Fatal, message, args);
+      Log(logLevel, message, typeof(T), args);
+    }
+
+    static void LogWithSender(LogLevel logLevel, string message, params object[] args)
+    {
+      var stackTrace = new StackFrame(2);
+      var senderType = stackTrace.GetMethod().DeclaringType;
+      Log(logLevel, message, senderType);
+    }
+
+    public static void Emergency(string message, params object[] args)
+    {
+      LogWithSender(LogLevel.Emergency, message, args);
+    }
+
+    public static void Emergency<T>(string message, params object[] args)
+    {
+      Log<T>(LogLevel.Emergency, message, args);
+    }
+
+    public static void Alert(string message, params object[] args)
+    {
+      LogWithSender(LogLevel.Alert, message, args);
+    }
+
+    public static void Alert<T>(string message, params object[] args)
+    {
+      Log<T>(LogLevel.Alert, message, args);
+    }
+
+    public static void Critical(string message, params object[] args)
+    {
+      LogWithSender(LogLevel.Critical, message, args);
+    }
+
+    public static void Critical<T>(string message, params object[] args)
+    {
+      Log<T>(LogLevel.Critical, message, args);
     }
 
     public static void Error(string message, params object[] args)
     {
-      Log(LogLevel.Error, message, args);
+      LogWithSender(LogLevel.Error, message, args);
     }
 
-    public static void Warn(string message, params object[] args)
+    public static void Error<T>(string message, params object[] args)
     {
-      Log(LogLevel.Warn, message, args);
+      Log<T>(LogLevel.Error, message, args);
     }
 
-    public static void Info(string message, params object[] args)
+    public static void Warning(string message, params object[] args)
     {
-      Log(LogLevel.Info, message, args);
+      LogWithSender(LogLevel.Warning, message, args);
+    }
+
+    public static void Warning<T>(string message, params object[] args)
+    {
+      Log<T>(LogLevel.Warning, message, args);
+    }
+
+    public static void Notice(string message, params object[] args)
+    {
+      LogWithSender(LogLevel.Notice, message, args);
+    }
+
+    public static void Notice<T>(string message, params object[] args)
+    {
+      Log<T>(LogLevel.Notice, message, args);
+    }
+
+    public static void Information(string message, params object[] args)
+    {
+      LogWithSender(LogLevel.Information, message, args);
+    }
+
+    public static void Information<T>(string message, params object[] args)
+    {
+      Log<T>(LogLevel.Information, message, args);
     }
 
     public static void Debug(string message, params object[] args)
     {
-      Log(LogLevel.Debug, message, args);
+      LogWithSender(LogLevel.Debug, message, args);
     }
 
-    public static void Trace(string message, params object[] args)
+    public static void Debug<T>(string message, params object[] args)
     {
-      Log(LogLevel.Trace, message, args);
+      Log<T>(LogLevel.Debug, message, args);
     }
 
-    public static void All(string message, params object[] args)
-    {
-      Log(LogLevel.All, message, args);
-    }
-
-    static void Send(LogLevel logLevel, string message)
+    static void Send(LogLevel logLevel, string message, string sender)
     {
       var messageFormat = MessageFormat ?? "{message}";
       message = messageFormat.Replace("{message}", message);
