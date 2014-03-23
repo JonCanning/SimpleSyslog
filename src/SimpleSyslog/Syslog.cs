@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SimpleSyslog
 {
-  public static class Logger
+  public static class Syslog
   {
     static readonly AutoResetEvent AutoResetEvent = new AutoResetEvent(true);
     static UdpClient udpClient;
@@ -20,7 +20,7 @@ namespace SimpleSyslog
     {
       fixedSender = sender;
       udpClient = new UdpClient(hostName, port);
-      Logger.facility = facility;
+      Syslog.facility = facility;
     }
 
     public static void Log(LogLevel logLevel, string message, Type senderType, params object[] args)
