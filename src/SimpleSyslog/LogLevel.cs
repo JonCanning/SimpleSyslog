@@ -6,9 +6,9 @@
     Alert,
     Critical,
     Error,
-    Warning,
+    Warn,
     Notice,
-    Information,
+    Info,
     Debug
   }
 }

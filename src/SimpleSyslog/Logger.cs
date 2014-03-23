@@ -82,14 +82,14 @@ namespace SimpleSyslog
       Log<T>(LogLevel.Error, message, args);
     }
 
-    public static void Warning(string message, params object[] args)
+    public static void Warn(string message, params object[] args)
     {
-      LogWithSender(LogLevel.Warning, message, args);
+      LogWithSender(LogLevel.Warn, message, args);
     }
 
-    public static void Warning<T>(string message, params object[] args)
+    public static void Warn<T>(string message, params object[] args)
     {
-      Log<T>(LogLevel.Warning, message, args);
+      Log<T>(LogLevel.Warn, message, args);
     }
 
     public static void Notice(string message, params object[] args)
@@ -102,14 +102,14 @@ namespace SimpleSyslog
       Log<T>(LogLevel.Notice, message, args);
     }
 
-    public static void Information(string message, params object[] args)
+    public static void Info(string message, params object[] args)
     {
-      LogWithSender(LogLevel.Information, message, args);
+      LogWithSender(LogLevel.Info, message, args);
     }
 
-    public static void Information<T>(string message, params object[] args)
+    public static void Info<T>(string message, params object[] args)
     {
-      Log<T>(LogLevel.Information, message, args);
+      Log<T>(LogLevel.Info, message, args);
     }
 
     public static void Debug(string message, params object[] args)
