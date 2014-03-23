@@ -1,19 +1,27 @@
 SimpleSyslog
 ============
 
-    Logger.Initialize("host.syslog.com", 12345);
-    Logger.Information("Hello world!");
+    Syslog.Initialize("host.syslog.com", 12345);
+    Syslog.Info("Hello world!");
     
 Sender will be the calling type
 
 Customise the message format - e.g. to use with Loggly
 
-    Logger.MessageFormat = "[bdda562d-b644-457e-9876-1fed861e7139@41058 tag=\"Example1\"] {message}"; 
+    Syslog.MessageFormat = "[bdda562d-b644-457e-9876-1fed861e7139@41058 tag=\"Example1\"] {message}"; 
     
 Fix the sender and the facility
 
-    Logger.Initialize("host.syslog.com", 12345, "MyAppName", 17);
+    Syslog.Initialize("host.syslog.com", 12345, "MyAppName", 17);
 
-Set the sender to a different type
+Set the sender to a type
 
-    Logger.Information<MyClass>("Hello world!");
+    Syslog.Info<MyClass>("Hello world!");
+    
+Set the sender
+
+    Syslog.Info("Sent from me", "Hello world!");
+    
+Format the message
+
+    Syslog.Info("Hello {0}", "World!");
