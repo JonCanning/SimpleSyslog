@@ -3,18 +3,16 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SimpleSyslog
 {
   public static class Syslog
   {
-    static readonly AutoResetEvent AutoResetEvent = new AutoResetEvent(true);
     static UdpClient udpClient;
     static int facility;
-    public static string MessageFormat { get; set; }
     static string fixedSender;
+    public static string MessageFormat { get; set; }
 
     public static void Initialize(string hostName, int port, int facility = 16, string sender = null)
     {
@@ -26,7 +24,7 @@ namespace SimpleSyslog
     public static void Log(LogLevel logLevel, string sender, string message, params object[] args)
     {
       message = string.Format(message, args);
-      sender = fixedSender ?? sender.Replace(' ', '_');
+      sender = (fixedSender ?? sender).Replace(' ', '_');
       Task.Factory.StartNew(() => Send(logLevel, message, sender));
     }
 
@@ -164,14 +162,13 @@ namespace SimpleSyslog
 
     static void Send(LogLevel logLevel, string message, string sender)
     {
+      if (udpClient == null)
+        return;
       var messageFormat = MessageFormat ?? "{message}";
       message = messageFormat.Replace("{message}", message);
       message = string.Format("<{0}>{1} {2} {3} {4}", facility * 8 + (int)logLevel, DateTime.UtcNow.ToString("s"), Dns.GetHostName(), sender, message);
       var bytes = Encoding.ASCII.GetBytes(message);
-      AutoResetEvent.WaitOne();
-      AutoResetEvent.Reset();
-      udpClient.Send(bytes, bytes.Length);
-      AutoResetEvent.Set();
+      udpClient.BeginSend(bytes, bytes.Length, x => udpClient.EndSend(x), null);
     }
   }
 }
