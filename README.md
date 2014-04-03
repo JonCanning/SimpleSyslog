@@ -18,10 +18,6 @@ Set the sender to a type
 
     Syslog.Info<MyClass>("Hello world!");
     
-Set the sender
-
-    Syslog.Info("Sent from me", "Hello world!");
-    
 Format the message
 
     Syslog.Info("Hello {0}", "World!");
