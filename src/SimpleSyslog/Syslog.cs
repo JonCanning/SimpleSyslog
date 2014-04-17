@@ -28,7 +28,7 @@ namespace SimpleSyslog
       Task.Factory.StartNew(() => Send(logLevel, message, sender));
     }
 
-    public static void Log<T>(LogLevel logLevel, string message, params object[] args)
+    public static void Log<T>(LogLevel logLevel, string message, params object[] args) where T : class 
     {
       Log(logLevel, typeof(T).Name, message, args);
     }
@@ -44,7 +44,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Emergency, message, args);
     }
 
-    public static void Emergency<T>(string message, params object[] args)
+    public static void Emergency<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Emergency, message, args);
     }
@@ -54,7 +54,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Alert, message, args);
     }
 
-    public static void Alert<T>(string message, params object[] args)
+    public static void Alert<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Alert, message, args);
     }
@@ -64,7 +64,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Critical, message, args);
     }
 
-    public static void Critical<T>(string message, params object[] args)
+    public static void Critical<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Critical, message, args);
     }
@@ -74,7 +74,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Error, message, args);
     }
 
-    public static void Error<T>(string message, params object[] args)
+    public static void Error<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Error, message, args);
     }
@@ -84,7 +84,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Warn, message, args);
     }
 
-    public static void Warn<T>(string message, params object[] args)
+    public static void Warn<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Warn, message, args);
     }
@@ -94,7 +94,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Notice, message, args);
     }
 
-    public static void Notice<T>(string message, params object[] args)
+    public static void Notice<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Notice, message, args);
     }
@@ -104,7 +104,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Info, message, args);
     }
 
-    public static void Info<T>(string message, params object[] args)
+    public static void Info<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Info, message, args);
     }
@@ -114,7 +114,7 @@ namespace SimpleSyslog
       LogWithSender(LogLevel.Debug, message, args);
     }
 
-    public static void Debug<T>(string message, params object[] args)
+    public static void Debug<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Debug, message, args);
     }
