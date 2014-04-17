@@ -28,15 +28,20 @@ namespace SimpleSyslog
       Task.Factory.StartNew(() => Send(logLevel, message, sender));
     }
 
-    public static void Log<T>(LogLevel logLevel, string message, params object[] args) where T : class 
+    public static void Log<T>(LogLevel logLevel, string message, params object[] args) where T : class
     {
-      Log(logLevel, typeof(T).Name, message, args);
+      Log(logLevel, typeof (T).Name, message, args);
     }
 
     static void LogWithSender(LogLevel logLevel, string message, params object[] args)
     {
       var stackTrace = new StackFrame(2);
       Log(logLevel, stackTrace.GetMethod().DeclaringType.Name, message, args);
+    }
+
+    public static void Emergency(object arg)
+    {
+      Emergency(arg.ToString());
     }
 
     public static void Emergency(string message, params object[] args)
@@ -49,6 +54,11 @@ namespace SimpleSyslog
       Log<T>(LogLevel.Emergency, message, args);
     }
 
+    public static void Alert(object arg)
+    {
+      Alert(arg.ToString());
+    }
+
     public static void Alert(string message, params object[] args)
     {
       LogWithSender(LogLevel.Alert, message, args);
@@ -57,6 +67,11 @@ namespace SimpleSyslog
     public static void Alert<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Alert, message, args);
+    }
+
+    public static void Critical(object arg)
+    {
+      Critical(arg.ToString());
     }
 
     public static void Critical(string message, params object[] args)
@@ -69,6 +84,11 @@ namespace SimpleSyslog
       Log<T>(LogLevel.Critical, message, args);
     }
 
+    public static void Error(object arg)
+    {
+      Error(arg.ToString());
+    }
+
     public static void Error(string message, params object[] args)
     {
       LogWithSender(LogLevel.Error, message, args);
@@ -77,6 +97,11 @@ namespace SimpleSyslog
     public static void Error<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Error, message, args);
+    }
+
+    public static void Warn(object arg)
+    {
+      Warn(arg.ToString());
     }
 
     public static void Warn(string message, params object[] args)
@@ -89,6 +114,11 @@ namespace SimpleSyslog
       Log<T>(LogLevel.Warn, message, args);
     }
 
+    public static void Notice(object arg)
+    {
+      Notice(arg.ToString());
+    }
+
     public static void Notice(string message, params object[] args)
     {
       LogWithSender(LogLevel.Notice, message, args);
@@ -99,6 +129,11 @@ namespace SimpleSyslog
       Log<T>(LogLevel.Notice, message, args);
     }
 
+    public static void Info(object arg)
+    {
+      Info(arg.ToString());
+    }
+
     public static void Info(string message, params object[] args)
     {
       LogWithSender(LogLevel.Info, message, args);
@@ -107,6 +142,11 @@ namespace SimpleSyslog
     public static void Info<T>(string message, params object[] args) where T : class
     {
       Log<T>(LogLevel.Info, message, args);
+    }
+
+    public static void Debug(object arg)
+    {
+      Debug(arg.ToString());
     }
 
     public static void Debug(string message, params object[] args)
@@ -125,7 +165,7 @@ namespace SimpleSyslog
         return;
       var messageFormat = MessageFormat ?? "{message}";
       message = messageFormat.Replace("{message}", message);
-      message = string.Format("<{0}>{1} {2} {3} {4}", facility * 8 + (int)logLevel, DateTime.UtcNow.ToString("s"), Dns.GetHostName(), sender, message);
+      message = string.Format("<{0}>{1} {2} {3} {4}", facility*8 + (int) logLevel, DateTime.UtcNow.ToString("s"), Dns.GetHostName(), sender, message);
       var bytes = Encoding.ASCII.GetBytes(message);
       udpClient.BeginSend(bytes, bytes.Length, x => udpClient.EndSend(x), null);
     }
