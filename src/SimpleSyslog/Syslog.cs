@@ -36,7 +36,8 @@ namespace SimpleSyslog
     static void LogWithSender(LogLevel logLevel, string message, params object[] args)
     {
       var stackTrace = new StackFrame(2);
-      Log(logLevel, stackTrace.GetMethod().DeclaringType.Name, message, args);
+      var declaringType = stackTrace.GetMethod().DeclaringType ?? typeof(Syslog);
+      Log(logLevel, declaringType.Name, message, args);
     }
 
     public static void Emergency(object arg)
