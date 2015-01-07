@@ -35,6 +35,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SyslogConsoleWriter.cs" />
+    <Compile Include="SyslogTraceListener.cs" />
     <Compile Include="Syslog.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

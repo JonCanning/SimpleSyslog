@@ -12,6 +12,7 @@ namespace SimpleSyslog
     static UdpClient udpClient;
     static int facility;
     static string fixedSender;
+    internal static int stackHeight = 2;
     public static string MessageFormat { get; set; }
 
     public static void Initialize(string hostName, int port, int facility = 16, string sender = null)
@@ -35,7 +36,7 @@ namespace SimpleSyslog
 
     static void LogWithSender(LogLevel logLevel, string message, params object[] args)
     {
-      var stackTrace = new StackFrame(2);
+      var stackTrace = new StackFrame(stackHeight);
       var declaringType = stackTrace.GetMethod().DeclaringType ?? typeof(Syslog);
       Log(logLevel, declaringType.Name, message, args);
     }
