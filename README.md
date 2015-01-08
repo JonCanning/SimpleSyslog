@@ -21,3 +21,13 @@ Set the sender to a type
 Format the message
 
     Syslog.Info("Hello {0}", "World!");
+    
+Use the Trace Listener
+    
+    Trace.Listeners.Add(new SyslogTraceListener());
+    Trace.WriteLine("Hello trace!");
+    
+Use the Console Writer
+
+    Console.SetOut(new SyslogConsoleWriter());
+    Console.WriteLine("Hello console!");
