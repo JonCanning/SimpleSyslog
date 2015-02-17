@@ -4,6 +4,13 @@ namespace SimpleSyslog
 {
   public class SyslogTraceListener : TraceListener
   {
+    public SyslogTraceListener() {}
+
+    public SyslogTraceListener(string hostName, int port, int facility = 16, string sender = null)
+    {
+      Syslog.Initialize(hostName, port, facility, sender);
+    }
+
     static void Log(string message)
     {
       var currentStackHeight = Syslog.stackHeight;

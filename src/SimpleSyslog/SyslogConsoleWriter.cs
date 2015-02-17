@@ -4,6 +4,13 @@ namespace SimpleSyslog
 {
   public class SyslogConsoleWriter : StringWriter
   {
+    public SyslogConsoleWriter() {}
+
+    public SyslogConsoleWriter(string hostName, int port, int facility = 16, string sender = null)
+    {
+      Syslog.Initialize(hostName, port, facility, sender);
+    }
+
     static void Log(string message)
     {
       var currentStackHeight = Syslog.stackHeight;
