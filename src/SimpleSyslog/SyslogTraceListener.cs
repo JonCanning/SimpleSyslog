@@ -11,6 +11,16 @@ namespace SimpleSyslog
       Syslog.Initialize(hostName, port, facility, sender);
     }
 
+    public SyslogTraceListener(string initializeData)
+    {
+      var dataItems = initializeData.Split(',');
+      var hostName = dataItems[0];
+      var port = int.Parse(dataItems[1]);
+      var facility = dataItems.Length > 2 ? int.Parse(dataItems[2]) : 16;
+      var sender = dataItems.Length > 3 ? dataItems[3] : null;
+      Syslog.Initialize(hostName, port, facility, sender);
+    }
+
     static void Log(string message)
     {
       var currentStackHeight = Syslog.stackHeight;
