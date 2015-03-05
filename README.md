@@ -31,3 +31,15 @@ Use the Console Writer
 
     Console.SetOut(new SyslogConsoleWriter());
     Console.WriteLine("Hello console!");
+
+SimpleSyslog.Portable
+=====================
+
+In this version you need to specify the client and the sender. Also, the API is asynchronous.
+
+    await Syslog.Initialize("host.syslog.com", 12345, "Jons Phone");
+    await Syslog.Info("AppStart", "Hello world!");
+    
+You can still use the generic overload to set the sender:
+
+    await Syslog.Info<AppStart>("Hello world!");
