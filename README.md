@@ -1,45 +1,22 @@
 SimpleSyslog
 ============
 
-    Syslog.Initialize("host.syslog.com", 12345);
-    Syslog.Info("Hello world!");
-    
-Sender will be the calling type
+Initialize Syslog with the host and port
 
-Customise the message format - e.g. to use with Loggly
+    Syslog.Initialize("host.syslog.com", 12345)
 
-    Syslog.MessageFormat = "[bdda562d-b644-457e-9876-1fed861e7139@41058 tag=\"Example1\"] {message}"; 
-    
-Fix the sender and the facility
+Optionally set facility, sender, useLocalTime, and messageFormat
 
-    Syslog.Initialize("host.syslog.com", 12345, "MyAppName", 17);
+	Syslog.Initialize("host.syslog.com", 12345, facility: 15, sender: "My App", useLocalTime: true, messageFormat: "This is the syslog {message}")
 
-Set the sender to a type
+Log with a sender
 
-    Syslog.Info<MyClass>("Hello world!");
-    
-Format the message
+	Syslog.Info("GlobalCommunication", "Hello World")
 
-    Syslog.Info("Hello {0}", "World!");
-    
-Use the Trace Listener
-    
-    Trace.Listeners.Add(new SyslogTraceListener());
-    Trace.WriteLine("Hello trace!");
-    
-Use the Console Writer
+Log with calling type as the sender
 
-    Console.SetOut(new SyslogConsoleWriter());
-    Console.WriteLine("Hello console!");
+	this.Logger().Info("Hello World")
 
-SimpleSyslog.Portable
-=====================
+Format the message with arguments
 
-In this version you need to specify the client and the sender. Also, the API is asynchronous.
-
-    await Syslog.Initialize("host.syslog.com", 12345, "Jons Phone");
-    await Syslog.Info("AppStart", "Hello world!");
-    
-You can still use the generic overload to set the sender:
-
-    await Syslog.Info<AppStart>("Hello world!");
+    this.Logger().Info("Hello {0}", "World")

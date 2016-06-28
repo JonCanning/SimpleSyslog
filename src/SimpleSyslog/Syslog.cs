@@ -1,178 +1,134 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleSyslog
 {
-  public static class Syslog
-  {
-    private static bool useLocalTime;
-    private static UdpClient udpClient;
-    private static int facility;
-    private static string fixedSender;
-    internal static int stackHeight = 2;
-    public static string MessageFormat { get; set; }
-
-    public static void Initialize(string hostName, int port, int facility = 16, string sender = null, bool useLocalTime = false)
+    public static class Syslog
     {
-      fixedSender = sender;
-      udpClient = new UdpClient(hostName, port);
-      Syslog.facility = facility;
-      Syslog.useLocalTime = useLocalTime;
-    }
+        static bool _useLocalTime;
+        static readonly UdpClient UdpClient = new UdpClient();
+        static int _facility;
+        static string _fixedSender;
+        static string _hostName;
+        static int _port;
+        static string _messageFormat;
 
-    public static void Log(LogLevel logLevel, string sender, string message, params object[] args)
-    {
-      message = string.Format(message, args);
-      sender = (fixedSender ?? sender).Replace(' ', '_');
-      Task.Factory.StartNew(() => Send(logLevel, message, sender));
-    }
+        public static void Initialize(string hostName, int port, int facility = 16, string sender = null, bool useLocalTime = false, string messageFormat = null)
+        {
+            _hostName = hostName;
+            _port = port;
+            _fixedSender = sender;
+            _facility = facility;
+            _useLocalTime = useLocalTime;
+            _messageFormat = messageFormat;
+        }
 
-    public static void Log<T>(LogLevel logLevel, string message, params object[] args) where T : class
-    {
-      Log(logLevel, typeof(T).Name, message, args);
-    }
+        public static Logger Logger(this object obj)
+        {
+            return new Logger(obj.GetType()
+                                 .Name);
+        }
 
-    private static void LogWithSender(LogLevel logLevel, string message, params object[] args)
-    {
-      var stackTrace = new StackFrame(stackHeight);
-      var declaringType = stackTrace.GetMethod().DeclaringType ?? typeof(Syslog);
-      Log(logLevel, declaringType.Name, message, args);
-    }
+        static void SendLog(LogLevel logLevel, string sender, string message, params object[] args)
+        {
+            new Logger(sender).SendLog(logLevel, message, args);
+        }
 
-    public static void Emergency(object arg)
-    {
-      Emergency(arg.ToString());
-    }
+        public static void Emergency(string sender, object arg)
+        {
+            Emergency(sender, arg.ToString());
+        }
 
-    public static void Emergency(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Emergency, message, args);
-    }
+        public static void Emergency(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Emergency, sender, message, args);
+        }
 
-    public static void Emergency<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Emergency, message, args);
-    }
+        public static void Alert(string sender, object arg)
+        {
+            Alert(sender, arg.ToString());
+        }
 
-    public static void Alert(object arg)
-    {
-      Alert(arg.ToString());
-    }
+        public static void Alert(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Alert, sender, message, args);
+        }
 
-    public static void Alert(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Alert, message, args);
-    }
+        public static void Critical(string sender, object arg)
+        {
+            Critical(sender, arg.ToString());
+        }
 
-    public static void Alert<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Alert, message, args);
-    }
+        public static void Critical(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Critical, sender, message, args);
+        }
 
-    public static void Critical(object arg)
-    {
-      Critical(arg.ToString());
-    }
+        public static void Error(string sender, object arg)
+        {
+            Error(sender, arg.ToString());
+        }
 
-    public static void Critical(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Critical, message, args);
-    }
+        public static void Error(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Error, sender, message, args);
+        }
 
-    public static void Critical<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Critical, message, args);
-    }
+        public static void Warn(string sender, object arg)
+        {
+            Warn(sender, arg.ToString());
+        }
 
-    public static void Error(object arg)
-    {
-      Error(arg.ToString());
-    }
+        public static void Warn(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Warn, sender, message, args);
+        }
 
-    public static void Error(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Error, message, args);
-    }
+        public static void Notice(string sender, object arg)
+        {
+            Notice(sender, arg.ToString());
+        }
 
-    public static void Error<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Error, message, args);
-    }
+        public static void Notice(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Notice, sender, message, args);
+        }
 
-    public static void Warn(object arg)
-    {
-      Warn(arg.ToString());
-    }
+        public static void Info(string sender, object arg)
+        {
+            Info(sender, arg.ToString());
+        }
 
-    public static void Warn(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Warn, message, args);
-    }
+        public static void Info(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Info, sender, message, args);
+        }
 
-    public static void Warn<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Warn, message, args);
-    }
+        public static void Debug(string sender, object arg)
+        {
+            Debug(sender, arg.ToString());
+        }
 
-    public static void Notice(object arg)
-    {
-      Notice(arg.ToString());
-    }
+        public static void Debug(string sender, string message, params object[] args)
+        {
+            SendLog(LogLevel.Debug, sender, message, args);
+        }
 
-    public static void Notice(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Notice, message, args);
+        internal static void Send(LogLevel logLevel, string sender, string message)
+        {
+            if (string.IsNullOrWhiteSpace(_hostName) || _port == 0)
+                return;
+            sender = (_fixedSender ?? sender).Replace(' ', '_');
+            var messageFormat = _messageFormat ?? "{message}";
+            message = messageFormat.Replace("{message}", message);
+            var dateTime = _useLocalTime ? DateTime.Now.ToString("s") : DateTime.UtcNow.ToString("s");
+            var hostName = Dns.GetHostName();
+            message = $"<{_facility*8 + (int) logLevel}>{dateTime} {hostName} {sender} {message}";
+            var bytes = Encoding.UTF8.GetBytes(message);
+            UdpClient.SendAsync(bytes, bytes.Length, _hostName, _port)
+                     .Start();
+        }
     }
-
-    public static void Notice<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Notice, message, args);
-    }
-
-    public static void Info(object arg)
-    {
-      Info(arg.ToString());
-    }
-
-    public static void Info(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Info, message, args);
-    }
-
-    public static void Info<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Info, message, args);
-    }
-
-    public static void Debug(object arg)
-    {
-      Debug(arg.ToString());
-    }
-
-    public static void Debug(string message, params object[] args)
-    {
-      LogWithSender(LogLevel.Debug, message, args);
-    }
-
-    public static void Debug<T>(string message, params object[] args) where T : class
-    {
-      Log<T>(LogLevel.Debug, message, args);
-    }
-
-    private static void Send(LogLevel logLevel, string message, string sender)
-    {
-      if (udpClient == null)
-        return;
-      var messageFormat = MessageFormat ?? "{message}";
-      message = messageFormat.Replace("{message}", message);
-      message =
-        $"<{facility*8 + (int) logLevel}>{(useLocalTime ? DateTime.Now.ToString("s") : DateTime.UtcNow.ToString("s"))} {Dns.GetHostName()} {sender} {message}";
-      var bytes = Encoding.ASCII.GetBytes(message);
-      udpClient.BeginSend(bytes, bytes.Length, x => udpClient.EndSend(x), null);
-    }
-  }
 }

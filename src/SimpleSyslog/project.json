@@ -1,0 +1,16 @@
+﻿{
+  "title": "SimpleSyslog",
+  "version": "2.0.0",
+
+  "dependencies": {
+    "System.Net.NameResolution": "4.0.0",
+    "System.Net.Sockets": "4.1.0",
+    "System.Runtime": "4.1.0"
+  },
+
+  "frameworks": {
+    "netstandard1.1": {
+      "imports": "dnxcore50"
+    }
+  }
+}
